@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { auth } from "../lib/firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useRouter } from "next/navigation";
@@ -9,18 +9,31 @@ import Logo from '../assets/images/bigPlain.png';
 
 export default function HomePage() {
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) router.push("/chat");
+      if (user) {
+        router.push("/chat");
+      } else {
+        setLoading(false);
+      }
     });
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
   const login = async () => {
     const provider = new GoogleAuthProvider();
     await signInWithPopup(auth, provider);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
     <main className="relative w-screen h-screen bg-white dark:bg-black transition-colors duration-300">

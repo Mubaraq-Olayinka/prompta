@@ -38,6 +38,8 @@ export default function ClientSelector({ onSelect }: { onSelect: (clientId: stri
         if (snapshot.empty) {
           console.warn("⚠️ No documents in 'clients' collection");
         }
+
+        console.log("snapshot.docs",snapshot.docs)
   
         const options = snapshot.docs.map(doc => {
           const data = doc.data();
@@ -52,7 +54,7 @@ export default function ClientSelector({ onSelect }: { onSelect: (clientId: stri
         console.log("✅ Fetched clients:", options);
         setClientOptions(options);
       } catch (err) {
-        console.error("❌ Failed to fetch clients:", err);
+        console.error("❌ Failed to fetch clients:", err.code, err.message);
       }
     };
   

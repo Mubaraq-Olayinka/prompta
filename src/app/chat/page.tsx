@@ -1,5 +1,5 @@
 'use client';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ChatBox from "../../components/ChatBox";
 import ClientSelector from "@/components/ClientSelector";
 import { Button } from '@mantine/core';
@@ -7,9 +7,42 @@ import { LogOut } from "lucide-react";
 import Logo from '@/assets/images/plainLogo.png';
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { auth } from "@/lib/firebase";
 
 export default function ChatPage() {
   const [selectedClient, setSelectedClient] = useState<string | null>(null);
+
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (!user) {
+        router.push("/");
+      } else {
+        setLoading(false);
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      router.push("/");
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-white">
@@ -26,7 +59,7 @@ export default function ChatPage() {
         </div>
 
         <div className="p-4 border-t border-gray-200">
-          <Link href={'#'} className="flex items-center gap-2">
+          <Link href={'#'} className="flex items-center gap-2" onClick={handleLogout}>
             <LogOut />
             Logout
           </Link>
