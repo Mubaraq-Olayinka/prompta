@@ -10,7 +10,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY || "");
 
 // Load service account
-const serviceAccountPath = join(process.cwd(), "service-account-dev.json");
+const serviceAccountPath = join(process.cwd(), "service-account.json");
 const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, "utf8"));
 
 // Initialize Firebase Admin
